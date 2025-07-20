@@ -4,12 +4,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Icon from '@/components/ui/icon';
 
 export default function Index() {
   const [activeUsers, setActiveUsers] = useState(47892);
   const [totalViews, setTotalViews] = useState(1247893);
   const [systemStatus, setSystemStatus] = useState('active');
+  const [targetUrl, setTargetUrl] = useState('https://example.com');
+  const [isRunning, setIsRunning] = useState(false);
 
   // Simulate real-time data updates
   useEffect(() => {
@@ -259,6 +263,49 @@ export default function Index() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Target URL Configuration */}
+                <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold flex items-center">
+                      <Icon name="Globe" size={20} className="mr-2" />
+                      Целевая ссылка
+                    </h3>
+                    <Button 
+                      size="sm" 
+                      variant={isRunning ? "destructive" : "default"}
+                      onClick={() => setIsRunning(!isRunning)}
+                    >
+                      <Icon name={isRunning ? "Square" : "Play"} size={16} className="mr-2" />
+                      {isRunning ? "Остановить" : "Запустить"}
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="target-url">URL для просмотра</Label>
+                    <div className="flex space-x-2">
+                      <Input 
+                        id="target-url"
+                        type="url"
+                        placeholder="https://example.com"
+                        value={targetUrl}
+                        onChange={(e) => setTargetUrl(e.target.value)}
+                        className="font-mono"
+                      />
+                      <Button variant="outline" size="icon">
+                        <Icon name="Copy" size={16} />
+                      </Button>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Ссылка, которую будут просматривать виртуальные пользователи
+                    </p>
+                  </div>
+                  {isRunning && (
+                    <div className="flex items-center space-x-2 text-sm text-primary">
+                      <Icon name="Activity" size={16} className="animate-pulse" />
+                      <span>Система активна • Просмотр: {targetUrl}</span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Основные настройки</h3>
