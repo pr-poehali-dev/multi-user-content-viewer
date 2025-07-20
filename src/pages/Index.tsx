@@ -14,16 +14,36 @@ export default function Index() {
   const [systemStatus, setSystemStatus] = useState('active');
   const [targetUrl, setTargetUrl] = useState('https://example.com');
   const [isRunning, setIsRunning] = useState(false);
+  const [visitResults, setVisitResults] = useState({
+    totalVisits: 0,
+    successfulVisits: 0,
+    failedVisits: 0,
+    avgResponseTime: 0,
+    uniqueIPs: 0,
+    bytesTransferred: 0
+  });
 
   // Simulate real-time data updates
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveUsers(prev => prev + Math.floor(Math.random() * 10) - 3);
       setTotalViews(prev => prev + Math.floor(Math.random() * 50));
+      
+      // Update visit results when running
+      if (isRunning) {
+        setVisitResults(prev => ({
+          totalVisits: prev.totalVisits + Math.floor(Math.random() * 25) + 5,
+          successfulVisits: prev.successfulVisits + Math.floor(Math.random() * 23) + 4,
+          failedVisits: prev.failedVisits + Math.floor(Math.random() * 3),
+          avgResponseTime: 150 + Math.floor(Math.random() * 100),
+          uniqueIPs: prev.uniqueIPs + Math.floor(Math.random() * 8) + 2,
+          bytesTransferred: prev.bytesTransferred + Math.floor(Math.random() * 500000) + 100000
+        }));
+      }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isRunning]);
 
   const metrics = [
     {
@@ -252,6 +272,88 @@ export default function Index() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Visit Results */}
+            {isRunning && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Icon name="BarChart3" size={20} />
+                    <span>Результаты посещений</span>
+                    <Badge variant="outline" className="animate-pulse">
+                      LIVE
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    Статистика посещений {targetUrl}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-primary">
+                        {visitResults.totalVisits.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Всего посещений</div>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-green-500">
+                        {visitResults.successfulVisits.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Успешных</div>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-red-500">
+                        {visitResults.failedVisits.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Ошибок</div>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-blue-500">
+                        {visitResults.avgResponseTime}ms
+                      </div>
+                      <div className="text-xs text-muted-foreground">Время ответа</div>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-purple-500">
+                        {visitResults.uniqueIPs.toLocaleString()}
+                      </div>
+                      <div className="text-xs text-muted-foreground">Уникальных IP</div>
+                    </div>
+                    <div className="text-center space-y-1">
+                      <div className="text-2xl font-bold font-mono text-orange-500">
+                        {(visitResults.bytesTransferred / 1024 / 1024).toFixed(1)}MB
+                      </div>
+                      <div className="text-xs text-muted-foreground">Передано</div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Успешность запросов</span>
+                      <span className="text-sm font-mono">
+                        {visitResults.totalVisits > 0 ? 
+                          ((visitResults.successfulVisits / visitResults.totalVisits) * 100).toFixed(1) 
+                          : 0}%
+                      </span>
+                    </div>
+                    <Progress 
+                      value={visitResults.totalVisits > 0 ? 
+                        (visitResults.successfulVisits / visitResults.totalVisits) * 100 
+                        : 0} 
+                      className="h-2" 
+                    />
+                  </div>
+
+                  <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                    <div className="flex items-center space-x-2 text-sm">
+                      <Icon name="Clock" size={14} />
+                      <span>Последнее обновление: {new Date().toLocaleTimeString()}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="config" className="space-y-6">
