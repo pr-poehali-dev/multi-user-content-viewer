@@ -84,11 +84,31 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-green': {
+					'0%, 100%': {
+						opacity: '1'
+					},
+					'50%': {
+						opacity: '0.6'
+					}
+				},
+				'counter-up': {
+					'from': {
+						transform: 'translateY(20px)',
+						opacity: '0'
+					},
+					'to': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-green': 'pulse-green 2s ease-in-out infinite',
+				'counter-up': 'counter-up 0.5s ease-out'
 			}
 		}
 	},
